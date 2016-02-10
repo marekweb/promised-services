@@ -3,11 +3,11 @@ function PromisedServices() {
 
   function retrieve(serviceName) {
     var service = services[serviceName];
-    if (service == null) {
+    if (!service) {
       throw new Error(`No such service defined: ${serviceName}`);
     }
 
-    if (service.instance == null) {
+    if (!service.instance) {
       var deps = Promise.all(service.deps.map(depName => retrieve(depName)));
       service.instance = deps.then(resolvedDeps => {
         return Promise.resolve(service.factory.apply(null, resolvedDeps));
@@ -29,6 +29,7 @@ function PromisedServices() {
     };
   }
 
+  retrieve.getServices = () => Object.keys(services);
   retrieve.define = define;
 
   return retrieve;
